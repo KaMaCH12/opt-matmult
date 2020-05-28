@@ -3,8 +3,8 @@ PROGOPTS = -p memory -n 1024
 
 SIM = ./simulate --l1-cache=32768,4,64 --ll-cache=262144,8,64
 SIMOPTS.0 ?= --l1-miss-max=51.0 --ll-miss-max=51.0
-SIMOPTS.1 ?= --l1-miss-max=4.5 --ll-miss-max=0.3
-SIMOPTS.2 ?= --l1-miss-max=68.0 --ll-miss-max=68.0
+SIMOPTS.1 ?= --l1-miss-max=6.5 --ll-miss-max=0.5
+SIMOPTS.2 ?= --l1-miss-max=100.0 --ll-miss-max=100.0
 SIMOPTS.3 ?= --l1-miss-max=2.25 --ll-miss-max=0.5
 SIM_PROGOPTS = -n 256
 
