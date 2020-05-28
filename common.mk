@@ -20,7 +20,7 @@ endif
 
 OFLAGS ?= -O2
 WFLAGS ?= -Wall -Wextra -Wno-unused -Wno-unused-result
-CFLAGS = -std=gnu11 -march=native $(OFLAGS) $(WFLAGS) $(PAPI_CFLAGS)
+CFLAGS = -std=gnu11 -march=sandybridge $(OFLAGS) $(WFLAGS) $(PAPI_CFLAGS)
 LDLIBS = $(PAPI_LDLIBS)
 
 all: $(PROG) # raport.html
