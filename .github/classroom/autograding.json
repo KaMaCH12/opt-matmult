@@ -1,0 +1,24 @@
+{
+  "tests": [
+    {
+      "name": "Symulacja",
+      "setup": "",
+      "run": "make sim",
+      "input": "",
+      "output": "",
+      "comparison": "included",
+      "timeout": 2,
+      "points": 0
+    },
+    {
+      "name": "Wykonanie",
+      "setup": "",
+      "run": "make test",
+      "input": "",
+      "output": "",
+      "comparison": "included",
+      "timeout": 2,
+      "points": 0
+    }
+  ]
+}
