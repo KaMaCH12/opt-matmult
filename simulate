@@ -23,7 +23,7 @@ def run_profiler(prog, source, proc, l1_cache, ll_cache):
                        '--callgrind-out-file=callgrind.out'] + prog,
                       stdout=sys.stdout)
     if callgrind.returncode:
-        print(callgrind.stderr.decode())
+        # print(callgrind.stderr.decode())
         raise SystemExit('Your program gives wrong answer!')
 
     annotate = shell(['callgrind_annotate', 'callgrind.out'])
