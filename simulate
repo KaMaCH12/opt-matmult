@@ -92,9 +92,17 @@ if __name__ == '__main__':
 
     instructions = info['Ir']
     references = info['Dr'] + info['Dw']
-    l1_misses = (info['D1mr'] + info['D1mw']) / references
-    ll_misses = (info['DLmr'] + info['DLmw']) / references
-    branch_misses = (info['Bcm'] + info['Bim']) / (info['Bc'] + info['Bi'])
+    branches = info['Bc'] + info['Bi']
+
+    l1_misses = 1.0
+    ll_misses = 1.0
+    branch_misses = 1.0
+
+    if references > 0:
+        l1_misses = (info['D1mr'] + info['D1mw']) / references
+        ll_misses = (info['DLmr'] + info['DLmw']) / references
+    if branches > 0:
+        branch_misses = (info['Bcm'] + info['Bim']) / branches
 
     print('> Branch misprediction ratio: %2.3f%%' % (100.0 * branch_misses))
     print('> L1 miss ratio: %2.3f%%' % (100.0 * l1_misses))
