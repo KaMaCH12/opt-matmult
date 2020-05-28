@@ -5,6 +5,9 @@
 
 #define T double
 
+/* You may modify following definition to try out different settings. */ 
+#define BLOCK 16
+
 /* Break matrices start alignment with following offsets: */
 #define A_OFFSET NITEMS(BLOCK_SIZE * 2, T)
 #define B_OFFSET NITEMS(BLOCK_SIZE * 1, T)

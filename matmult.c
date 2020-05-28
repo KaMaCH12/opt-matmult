@@ -14,9 +14,6 @@
  */
 #include "matmult.h"
 
-/* You can modify following definition to try out different settings. */ 
-#define BLOCK 16
-
 /* Useful macro for accessing row-major 2D arrays of size n×n. */
 #define M(a, i, j) a[(i) * n + (j)]
 

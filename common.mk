@@ -21,7 +21,8 @@ $(info Please install libpapi-dev $(PAPIVER) package to enable PMU counters!)
 endif
 
 OFLAGS ?= -O2 
-CFLAGS = -std=gnu11 -march=native $(OFLAGS) -Wall -Wextra $(PAPI_CFLAGS)
+WFLAGS ?= -Wall -Wextra -Wno-unused
+CFLAGS = -std=gnu11 -march=native $(OFLAGS) $(WFLAGS) $(PAPI_CFLAGS)
 LDLIBS = $(PAPI_LDLIBS)
 
 all: $(PROG) # raport.html
