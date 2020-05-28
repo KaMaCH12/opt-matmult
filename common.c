@@ -189,8 +189,9 @@ void pmc_init(pmc_evset_t evset) {
   }
 
   PAPI_reset(eventset);
-#endif
+
   memset(eventcount, 0, sizeof(eventcount));
+#endif
 }
 
 void pmc_kill(void) {
@@ -219,9 +220,11 @@ void pmc_stop(void) {
 }
 
 static long long pmc_read(const char *name) {
+#if PAPI
   for (evset_t *es = cur_evset; es->name; es++)
     if (strcmp(es->name, name) == 0)
       return eventcount[es->idx];
+#endif
   return 0;
 }
 

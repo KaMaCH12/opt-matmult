@@ -20,8 +20,8 @@ PAPI_CFLAGS := $(shell pkg-config --cflags papi-$(PAPIVER)) -DPAPI=0
 $(info Please install libpapi-dev $(PAPIVER) package to enable PMU counters!)
 endif
 
-OFLAGS ?= -O2 
-WFLAGS ?= -Wall -Wextra -Wno-unused
+OFLAGS ?= -O2
+WFLAGS ?= -Wall -Wextra -Wno-unused -Wunused-result
 CFLAGS = -std=gnu11 -march=native $(OFLAGS) $(WFLAGS) $(PAPI_CFLAGS)
 LDLIBS = $(PAPI_LDLIBS)
 
