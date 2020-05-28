@@ -19,7 +19,7 @@ $(info Please install libpapi-dev package to enable PMU counters!)
 endif
 
 OFLAGS ?= -O2
-WFLAGS ?= -Wall -Wextra -Wno-unused -Wunused-result
+WFLAGS ?= -Wall -Wextra -Wno-unused -Wno-unused-result
 CFLAGS = -std=gnu11 -march=native $(OFLAGS) $(WFLAGS) $(PAPI_CFLAGS)
 LDLIBS = $(PAPI_LDLIBS)
 
