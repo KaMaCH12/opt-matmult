@@ -1,15 +1,19 @@
 #include "common.h"
 #include "matmult.h"
 
-static void fill(T *dst, int size) {
-  for (int i = 0; i < size; i++)
-      dst[i] = 1;
+#define min(a, b) ((a) < (b) ? (a) : (b))
+
+static void fill(T_p dst, int n) {
+  for (int i = 0; i < n; i++)
+    for (int j = 0; j < n; j++)
+      dst[i * n + j] = min(i + 1, j + 1);
 }
 
 static matmult_t matmult[4] = {matmult0, matmult1, matmult2, matmult3};
 
 int main(int argc, char **argv) {
-  int opt, variant = -1, n = 0;
+  int opt, variant = -1;
+  long n = 0;
   pmc_evset_t evset = PMC_NONE;
   bool err = false;
 
@@ -35,7 +39,7 @@ int main(int argc, char **argv) {
   pmc_init(evset);
 
   if (n % BLOCK)
-    die("Matrix size (%d) must be divisible by %d!\n", n, BLOCK);
+    die("Matrix size (%ld) must be divisible by %d!\n", n, BLOCK);
 
   size_t size = n * n * sizeof(T);
   size_t pagesize = getpagesize();
@@ -45,11 +49,15 @@ int main(int argc, char **argv) {
   T *b = malloc_page_aligned(size + pagesize);
   T *c = malloc_page_aligned(size + pagesize);
 
-  printf("Generate 2 matrices %d x %d (%ld KiB each)\n", n, n, size >> 10);
+  printf("Generate 2 matrices %ld x %ld (%ld KiB each)\n", n, n, size >> 10);
 
-  fill(a, n * n + NITEMS(pagesize, T));
-  fill(b, n * n + NITEMS(pagesize, T));
-  bzero(c, size + pagesize);
+  T_p ma = a + A_OFFSET;
+  T_p mb = b + B_OFFSET;
+  T_p mc = c + C_OFFSET;
+
+  fill(ma, n);
+  fill(mb, n);
+  bzero(mc, size);
   flush_cache();
 
   printf("Performing matrix multiplication.\n");
@@ -58,12 +66,18 @@ int main(int argc, char **argv) {
   timer_reset(&timer);
   timer_start(&timer);
   pmc_start();
-  matmult[variant](n, a + A_OFFSET, b + B_OFFSET, c + C_OFFSET);
+  matmult[variant](n, ma, mb, mc);
   pmc_stop();
   timer_stop(&timer);
   timer_print(&timer);
 
   pmc_print();
+
+  /* Rudimentary check. We don't rely on it! */
+  T expected = n * (n + 1) * (2 * n + 1) / 6;
+  T value = mc[n * n - 1];
+  if (value != expected)
+    die("Incorrect answer: %ld (expected: %ld)!", value, expected);
 
   free(a);
   free(b);

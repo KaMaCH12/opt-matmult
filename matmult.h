@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-#define T double
+#define T long
 
 /* You may modify following definition to try out different settings. */ 
 #define BLOCK 16
