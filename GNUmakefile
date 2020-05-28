@@ -14,7 +14,7 @@ sim: sim-0 sim-1 sim-2 sim-3
 test: test-0 test-1 test-2 test-3
 
 sim-%: $(PROG)
-	$(SIM) $(SIMOPTS.$*) $(PROG).c:multiply$* -- ./$(PROG) $(SIM_PROGOPTS) -v $*
+	$(SIM) $(SIMOPTS.$*) $(PROG).c:$(PROG)$* -- ./$(PROG) $(SIM_PROGOPTS) -v $*
 
 test-%: $(PROG)
 	./$(PROG) $(PROGOPTS) -v $*
