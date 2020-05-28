@@ -7,5 +7,7 @@ jobs:
     name: Autograding
     runs-on: ubuntu-latest
     steps:
+      - run: |
+          sudo apt-get install valgrind libpapi-dev
       - uses: actions/checkout@v2
       - uses: education/autograding@v1
