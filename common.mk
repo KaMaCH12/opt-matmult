@@ -10,14 +10,12 @@ ifeq ($(UNAME), FreeBSD)
 CC = gcc -g
 endif
 
-PAPIVER := 5.7
-
-ifneq ($(shell pkg-config --modversion --silence-errors papi-$(PAPIVER)),)
-PAPI_CFLAGS := $(shell pkg-config --cflags papi-$(PAPIVER)) -DPAPI=1
-PAPI_LDLIBS := $(shell pkg-config --libs papi-$(PAPIVER))
+ifneq ($(shell pkg-config --modversion --silence-errors papi),)
+PAPI_CFLAGS := $(shell pkg-config --cflags papi) -DPAPI=1
+PAPI_LDLIBS := $(shell pkg-config --libs papi)
 else
-PAPI_CFLAGS := $(shell pkg-config --cflags papi-$(PAPIVER)) -DPAPI=0
-$(info Please install libpapi-dev $(PAPIVER) package to enable PMU counters!)
+PAPI_CFLAGS := $(shell pkg-config --cflags papi) -DPAPI=0
+$(info Please install libpapi-dev package to enable PMU counters!)
 endif
 
 OFLAGS ?= -O2
