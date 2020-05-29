@@ -23,15 +23,12 @@ WFLAGS ?= -Wall -Wextra -Wno-unused -Wno-unused-result
 CFLAGS = -std=gnu11 -march=sandybridge $(OFLAGS) $(WFLAGS) $(PAPI_CFLAGS)
 LDLIBS = $(PAPI_LDLIBS)
 
-all: $(PROG) # raport.html
+all: $(PROG)
 
 $(PROG): $(PROG).o main.o common.o
 $(PROG).o: $(PROG).c common.h
 main.o: main.c common.h $(PROG).h
 common.o: common.c common.h
-
-# requires "markdown" and "gnuplot" packages to be installed
-raport.html: raport.md figure.png
 
 %.html: %.md
 	markdown $< > $@
@@ -39,10 +36,8 @@ raport.html: raport.md figure.png
 %.png: %.gp %.dat
 	gnuplot $< > $@
 
-%.eps: %.gp %.dat
-	gnuplot $< > $@
-
 clean:
 	@rm -vf $(PROG) *.o *.html *.png *~
 
+.PHONY: all raport clean
 # vim: ts=8 sw=8

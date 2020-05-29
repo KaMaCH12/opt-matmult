@@ -19,4 +19,6 @@ sim-%: $(PROG)
 test-%: $(PROG)
 	./$(PROG) $(PROGOPTS) -v $*
 
+raport: raport.html figure.png
+
 # vim: ts=8 sw=8
