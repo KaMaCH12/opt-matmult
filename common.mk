@@ -26,7 +26,7 @@ LDLIBS = $(PAPI_LDLIBS)
 all: $(PROG)
 
 $(PROG): $(PROG).o main.o common.o
-$(PROG).o: $(PROG).c common.h
+$(PROG).o: $(PROG).c common.h $(PROG).h
 main.o: main.c common.h $(PROG).h
 common.o: common.c common.h
 
