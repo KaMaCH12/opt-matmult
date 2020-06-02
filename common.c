@@ -188,7 +188,7 @@ void pmc_init(pmc_evset_t evset) {
     }
   }
 
-  if (idx == 0)
+  if (idx == 0 && evset != PMC_NONE)
     die("Hardware performance counters disabled for user!\n"
         "Please run 'sysctl kernel.perf_event_paranoid=-1' as root.\n");
 
