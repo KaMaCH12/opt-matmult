@@ -19,12 +19,7 @@ int main(int argc, char **argv) {
 
   while ((opt = getopt(argc, argv, "p:n:v:")) != -1) {
     if (opt == 'p') {
-      if (strcmp(optarg, "ipc") == 0)
-        evset = PMC_IPC;
-      else if (strcmp(optarg, "branch") == 0)
-        evset = PMC_BRANCH;
-      else if (strcmp(optarg, "memory") == 0)
-        evset = PMC_MEMORY;
+      evset = pmc_evset_by_name(optarg);
     } else if (opt == 'n')
       n = atoi(optarg);
     else if (opt == 'v')
@@ -34,7 +29,7 @@ int main(int argc, char **argv) {
   }
 
   if (err || n == 0 || variant < 0 || variant >= 4)
-    die("Usage: %s -p [ipc|branch|memory] -n size -v variant\n", argv[0]);
+    die("Usage: %s -p [%s] -n size -v variant\n", argv[0], pmc_evset_string);
 
   pmc_init(evset);
 

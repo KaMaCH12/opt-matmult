@@ -158,11 +158,61 @@ static evset_t memory_evset[] = {
   { NULL, -1 },
 };
 
-static evset_t *all_evset[] = {
-  empty_evset, ipc_evset, branch_evset, memory_evset
+static evset_t l1cache_evset[] = {
+  { "PAPI_LD_INS", -1 },
+  { "PAPI_SR_INS", -1 },
+  { "PAPI_L1_DCM", -1 },
+  { NULL, -1 },
 };
+
+static evset_t l2cache_evset[] = {
+  { "PAPI_LD_INS", -1 },
+  { "PAPI_SR_INS", -1 },
+  { "PAPI_L2_DCM", -1 },
+  { NULL, -1 },
+};
+
+static evset_t l3cache_evset[] = {
+  { "PAPI_LD_INS", -1 },
+  { "PAPI_SR_INS", -1 },
+  { "PAPI_L3_DCM", -1 },
+  { NULL, -1 },
+};
+
+static evset_t tlb_evset[] = {
+  { "PAPI_LD_INS", -1 },
+  { "PAPI_SR_INS", -1 },
+  { "PAPI_TLB_DM", -1 },
+  { NULL, -1 },
+};
+
+static evset_t *all_evset[] = {
+  empty_evset, ipc_evset, branch_evset, memory_evset,
+  l1cache_evset, l2cache_evset, l3cache_evset, tlb_evset
+};
+
 static evset_t *cur_evset = NULL;
 #endif
+
+pmc_evset_t pmc_evset_by_name(const char *name) {
+  if (strcmp(name, "ipc") == 0)
+    return PMC_IPC;
+  if (strcmp(name, "branch") == 0)
+    return PMC_BRANCH;
+  if (strcmp(name, "memory") == 0)
+    return PMC_MEMORY;
+  if (strcmp(name, "l1") == 0)
+    return PMC_L1;
+  if (strcmp(name, "l2") == 0)
+    return PMC_L2;
+  if (strcmp(name, "l3") == 0)
+    return PMC_L3;
+  if (strcmp(name, "tlb") == 0)
+    return PMC_TLB;
+  return PMC_NONE;
+}
+
+const char pmc_evset_string[] = "ipc|branch|memory|l1|l2|l3|tlb";
 
 void pmc_init(pmc_evset_t evset) {
 #if PAPI
@@ -242,16 +292,20 @@ void pmc_print(void) {
     printf("> Branch misprediction ratio: %2.3f%%\n",
            100.0 * (double)pmc_read("PAPI_BR_MSP") /
            (double)pmc_read("PAPI_BR_CN"));
-  } else if (cur_evset == memory_evset) {
+  } else if (cur_evset != empty_evset) {
     double ldst_insns = pmc_read("PAPI_LD_INS") + pmc_read("PAPI_SR_INS");
-    printf("> L1 Data Cache miss ratio: %2.3f%%\n",
-           100.0 * pmc_read("PAPI_L1_DCM")/ldst_insns);
-    printf("> L2 Data Cache miss ratio: %2.3f%%\n",
-           100.0 * pmc_read("PAPI_L2_DCM")/ldst_insns);
-    printf("> L3 Cache miss ratio: %2.3f%%\n",
-           100.0 * pmc_read("PAPI_L3_TCM")/ldst_insns);
-    printf("> Data TLB miss ratio: %2.3f%%\n",
-           100.0 * pmc_read("PAPI_TLB_DM")/ldst_insns);
+    if (cur_evset == memory_evset || cur_evset == l1cache_evset)
+      printf("> L1 Data Cache miss ratio: %2.3f%%\n",
+             100.0 * pmc_read("PAPI_L1_DCM")/ldst_insns);
+    if (cur_evset == memory_evset || cur_evset == l2cache_evset)
+      printf("> L2 Data Cache miss ratio: %2.3f%%\n",
+             100.0 * pmc_read("PAPI_L2_DCM")/ldst_insns);
+    if (cur_evset == memory_evset || cur_evset == l3cache_evset)
+      printf("> L3 Cache miss ratio: %2.3f%%\n",
+             100.0 * pmc_read("PAPI_L3_TCM")/ldst_insns);
+    if (cur_evset == memory_evset || cur_evset == tlb_evset)
+      printf("> Data TLB miss ratio: %2.3f%%\n",
+             100.0 * pmc_read("PAPI_TLB_DM")/ldst_insns);
   }
 #endif
 }

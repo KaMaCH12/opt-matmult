@@ -71,12 +71,17 @@ void *malloc_page_aligned(size_t size);
 #define PAPI 0
 #endif
 
-typedef enum { PMC_NONE, PMC_IPC, PMC_BRANCH, PMC_MEMORY } pmc_evset_t;
+typedef enum {
+  PMC_NONE, PMC_IPC, PMC_BRANCH, PMC_MEMORY, PMC_L1, PMC_L2, PMC_L3, PMC_TLB
+} pmc_evset_t;
 
+pmc_evset_t pmc_evset_by_name(const char *name);
 void pmc_init(pmc_evset_t evset);
 void pmc_kill(void);
 void pmc_start(void);
 void pmc_stop(void);
 void pmc_print(void);
+
+extern const char pmc_evset_string[];
 
 #endif
