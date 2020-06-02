@@ -123,6 +123,7 @@ void *malloc_page_aligned(size_t size) {
  */
 
 #define MAX_EVENT 10
+#define MIN_HWCTRS 4
 
 static int eventset = PAPI_NULL;
 static long long eventcount[MAX_EVENT];
@@ -222,6 +223,24 @@ void pmc_init(pmc_evset_t evset) {
 	if (retval != PAPI_VER_CURRENT)
 		die("PAPI_library_init failed: %s!\n", PAPI_strerror(retval));
 
+  const PAPI_hw_info_t *hwinfo = PAPI_get_hardware_info();
+  if (hwinfo == NULL)
+    die("Could not fetch PAPI hardware information!\n");
+  if (hwinfo->virtualized)
+    die("Running inside virtual machine is not supported!\n");
+
+  retval = PAPI_get_opt(PAPI_MAX_HWCTRS, NULL);
+  if (retval < 0)
+    die("Number of hardware counters: %s\n", PAPI_strerror(retval));
+  if (retval == 0)
+    die("No hardware counters available! Maybe they are disabled for user?\n"
+        "Try to run 'sysctl kernel.perf_event_paranoid=-1' as root.\n");
+  if (retval < MIN_HWCTRS)
+    die("Configuration not supported: "
+        "need at least %d hardware counters, got only %d.\n"
+        "Try disabling hyper-threading in BIOS settings if possible!\n",
+        MIN_HWCTRS, retval);
+
 	retval = PAPI_create_eventset(&eventset);
 	if (retval != PAPI_OK)
 		die("PAPI_create_eventset failed: %s!\n", PAPI_strerror(retval));
@@ -231,16 +250,12 @@ void pmc_init(pmc_evset_t evset) {
   int idx = 0;
   for (evset_t *es = cur_evset; es->name; es++) {
     retval = PAPI_add_named_event(eventset, es->name);
-    if (retval != PAPI_OK) {
-      fprintf(stderr, "%s: %s\n", PAPI_strerror(retval), es->name);
-    } else {
-      es->idx = idx++;
-    }
+    if (retval != PAPI_OK)
+      die("PAPI_add_named_event %s: %s\n"
+          "Report output from 'papi_component_avail' command!\n",
+          es->name, PAPI_strerror(retval));
+    es->idx = idx++;
   }
-
-  if (idx == 0 && evset != PMC_NONE)
-    die("Hardware performance counters disabled for user!\n"
-        "Please run 'sysctl kernel.perf_event_paranoid=-1' as root.\n");
 
   PAPI_reset(eventset);
 
